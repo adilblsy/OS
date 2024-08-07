@@ -47,12 +47,12 @@ void fcfs()
                 avg_wt+=p[i].wt;
         }
 
+        printf("\nSJF SCHEDULING\nPID     |       AT      |       BT      |       CT      |       TAT     |       WT\n");
         for(i=0;i<n;i++)
         {
-                printf("%d  | %d  |  %d  |  %d  |  %d  |  %d\n\n",p[i].pid,p[i].at,p[i].bt,p[i].ct,p[i].tat,p[i].wt);
+                printf("\n%d	|	%d	|       %d	|       %d	|       %d	|       %d\n",p[i].pid,p[i].at,p[i].bt,p[i].ct,p[i].tat,p[i].wt);
         }
-
-        printf("Total TurnAround Time: %f\nAverage TurnAround Time: %.2f\nTotal Waiting Time: %f\nAverage Waiting Time: %.2f\n",avg_tat,avg_tat/n,avg_wt,avg_wt/n);
+        printf("\nTotal turnaroundtime: %.2f\nAverage turnaround time: %.2f\n\nTotal waiting time: %.2f\nAverage waiting time: %.2f\n\n",avg_tat,avg_tat/n,avg_wt,avg_wt/n);
 }
 
 void sjf()
@@ -100,12 +100,12 @@ void sjf()
                 avg_wt+=p[i].wt;
         }
 
+        printf("\nSJF SCHEDULING\nPID     |       AT      |       BT      |       CT      |       TAT     |       WT\n");
         for(i=0;i<n;i++)
         {
-                printf("%d  | %d  |  %d  |  %d  |  %d  |  %d\n\n",p[i].pid,p[i].at,p[i].bt,p[i].ct,p[i].tat,p[i].wt);
+                printf("\n%d	|	%d	|       %d	|       %d	|       %d	|       %d\n",p[i].pid,p[i].at,p[i].bt,p[i].ct,p[i].tat,p[i].wt);
         }
-
-        printf("Total TurnAround Time: %f\nAverage TurnAround Time: %.2f\nTotal Waiting Time: %f\nAverage Waiting Time: %.2f\n",avg_tat,avg_tat/n,avg_wt,avg_wt/n);
+        printf("\nTotal turnaroundtime: %.2f\nAverage turnaround time: %.2f\n\nTotal waiting time: %.2f\nAverage waiting time: %.2f\n\n",avg_tat,avg_tat/n,avg_wt,avg_wt/n);
 }
 
 void priority()
@@ -159,62 +159,93 @@ void priority()
                 avg_wt+=p[i].wt;
         }
 
+        printf("\nSJF SCHEDULING\nPID     |       AT      |       BT      |       CT      |       TAT     |       WT\n");
         for(i=0;i<n;i++)
         {
-                printf("%d  | %d  |  %d  |  %d  |  %d  |  %d  |  %d\n\n",p[i].pid,p[i].at,p[i].bt,p[i].prio,p[i].ct,p[i].tat,p[i].wt);
+                printf("\n%d	|	%d	|       %d	|       %d	|       %d	|       %d\n",p[i].pid,p[i].at,p[i].bt,p[i].ct,p[i].tat,p[i].wt);
         }
-
-        printf("Total TurnAround Time: %f\nAverage TurnAround Time: %.2f\nTotal Waiting Time: %f\nAverage Waiting Time: %.2f\n",avg_tat,avg_tat/n,avg_wt,avg_wt/n);
+        printf("\nTotal turnaroundtime: %.2f\nAverage turnaround time: %.2f\n\nTotal waiting time: %.2f\nAverage waiting time: %.2f\n\n",avg_tat,avg_tat/n,avg_wt,avg_wt/n);
 }
 
 void rdrb()
 {
-	int i, time = 0, tq, remaining = n;
-	int rem_bt[10];
-	float avg_wt = 0, avg_tat = 0;
+	int tq;
 
 	printf("Enter time quantum: ");
-	scanf("%d", &tq);
+	scanf("%d",&tq);
 
-	for (i = 0; i < n; i++)
+	int i,j,t=0,rem=n,rem_bt[10];
+        float avg_wt=0,avg_tat=0;
+
+	for(i=0;i<n;i++)
 	{
-        	rem_bt[i] = p[i].bt;
-    	}
+		rem_bt[i]=p[i].bt;
+	}
 
-	while (remaining > 0) {
-		for (i = 0; i < n; i++) {
-            		if (rem_bt[i] > 0) {
-                		if (rem_bt[i] > tq)
-				{
-                    			time += tq;
-                    			rem_bt[i] -= tq;
-                		}
-				else
-				{
-                    			time += rem_bt[i];
-                    			p[i].ct = time;
-                    			rem_bt[i] = 0;
-                    			remaining--;
-                		}
-            		}
-        	}
-    	}
+	int q[10],f=0,r=0;
+	int visited[10]={0};
 
-	for (i = 0; i < n; i++)
+	for(i=0;i<n;i++)
 	{
-        	p[i].tat = p[i].ct - p[i].at;
-        	p[i].wt = p[i].tat - p[i].bt;
+		if(p[i].at<=t)
+                {
+                        q[r++]=i;
+			visited[i]=1;
+                }
+	}
 
-        	avg_tat += p[i].tat;
-        	avg_wt += p[i].wt;
-    	}
+	while(rem>0)
+	{
+		i=q[f];
+		f=(f+1)%10;
 
-        for(i=0;i<n;i++)
+                if(rem_bt[i]>0)
+                {
+			if(rem_bt[i]>tq)
+                        {
+				t+=tq;
+				rem_bt[i]-=tq;
+			}
+			else
+			{
+				t+=rem_bt[i];
+                		p[i].ct=t;
+                		rem_bt[i]=0;
+				rem--;
+			}
+
+			for(j=0;j<n;j++)
+			{
+				if(p[j].at<=t && !visited[j])
+				{
+					q[r]=j;
+					r=(r+1)%10;
+					visited[j]=1;
+				}
+			}
+
+			if(rem_bt[i]>0)
+			{
+				q[r]=i;
+				r=(r+1)%10;
+			}
+		}
+	}
+
+	for(i=0;i<n;i++)
         {
-                printf("%d  | %d  |  %d  |  %d  |  %d  |  %d\n\n",p[i].pid,p[i].at,p[i].bt,p[i].ct,p[i].tat,p[i].wt);
+                p[i].tat=p[i].ct-p[i].at;
+                p[i].wt=p[i].tat-p[i].bt;
+                avg_tat+=p[i].tat;
+                avg_wt+=p[i].wt;
         }
 
-        printf("Total TurnAround Time: %f\nAverage TurnAround Time: %.2f\nTotal Waiting Time: %f\nAverage Waiting Time: %.2f\n",avg_tat,avg_tat/n,avg_wt,avg_wt/n);
+        printf("\nSJF SCHEDULING\nPID     |       AT      |       BT      |       CT      |       TAT     |       WT\n");
+        for(i=0;i<n;i++)
+        {
+                printf("\n%d	|	%d	|       %d	|       %d	|       %d	|       %d\n",p[i].pid,p[i].at,p[i].bt,p[i].ct,p[i].tat,p[i].wt);
+        }
+        printf("\nTotal turnaroundtime: %.2f\nAverage turnaround time: %.2f\n\nTotal waiting time: %.2f\nAverage waiting time: %.2f\n\n",avg_tat,avg_tat/n,avg_wt,avg_wt/n);
 }
 
 void main()
